@@ -2,6 +2,8 @@ package com.mygdx.game.logic.cards;
 
 import com.mygdx.game.logic.entities.Entity;
 
+import java.util.Collections;
+
 public class PlayCards {
     private static Deck deck;
     private static Entity player;
@@ -15,6 +17,9 @@ public class PlayCards {
 
     public static void applyEffects() {
         for (Card card : deck.getField()) {
+            if (card == null) {
+                continue;
+            }
             Entity target = null;
             Entity attacker = null;
 
@@ -48,5 +53,6 @@ public class PlayCards {
         }
 
         deck.getField().clear(); // Очищаем поле после применения эффектов
+        deck.getField().addAll(Collections.nCopies(4, null));
     }
 }

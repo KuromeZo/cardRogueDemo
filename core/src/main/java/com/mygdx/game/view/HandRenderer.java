@@ -22,6 +22,7 @@ public class HandRenderer {
     private final OrthographicCamera camera;
     private int selectedCardIndex = -1;
     private static int energy = 4;
+    private int selectedPosition = -1;
 
     private static Entity player = null;
     private static Entity enemy = null;
@@ -76,20 +77,30 @@ public class HandRenderer {
             }
         }
     }
+
     public void onClick() {
         if (energy != 0 && selectedCardIndex != -1) {
             Card selectedCard = deck.getHand().get(selectedCardIndex);
 
             selectedCard.setPlayerT();
-            // Перемещаем карту из руки на поле (но не играем сразу)
-            deck.getField().add(selectedCard);
-            deck.getHand().remove(selectedCard);
 
-            energy--;
-            System.out.println("Card added to field: " + selectedCard.getName());
+            // Если позиция выбрана, то карта размещается в соответствующем месте на поле
+            if (selectedPosition != -1) {
+                deck.getField().add(selectedPosition, selectedCard); // Используем выбранную позицию
+                deck.getHand().remove(selectedCard);
+                energy--;
+                System.out.println("Card added to field in position " + (selectedPosition + 1) + ": " + selectedCard.getName());
+                selectedPosition = -1;
+            } else {
+                System.out.println("No position selected");
+            }
         } else {
             System.out.println("No energy");
         }
+    }
+
+    public void setSelectedPosition(int position) {
+        this.selectedPosition = position;
     }
 
     /*public void onClick() {

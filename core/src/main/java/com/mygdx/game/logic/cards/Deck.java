@@ -1,6 +1,7 @@
 package com.mygdx.game.logic.cards;
 
 import com.mygdx.game.logic.entities.Entity;
+import com.mygdx.game.view.FieldRenderer;
 import com.mygdx.game.view.HandRenderer;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class Deck {
     public Deck(List<Card> initialCards) {
         this.deck = new ArrayList<>(initialCards);
         this.hand = new ArrayList<>();
-        this.field = new ArrayList<>();
+        this.field = new ArrayList<>(Collections.nCopies(4, null));
         shuffle(); // Перемешиваем колоду при создании
     }
 
@@ -63,6 +64,7 @@ public class Deck {
         System.out.println("-");
         drawHand();         // Берем новые карты
         HandRenderer.removeStun();
+        FieldRenderer.startTurn();
     }
 
     public List<Card> getHand() {

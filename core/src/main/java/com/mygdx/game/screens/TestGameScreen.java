@@ -21,9 +21,9 @@ import com.mygdx.game.logic.cards.*;
 import com.mygdx.game.logic.entities.Enemy;
 import com.mygdx.game.logic.entities.Player;
 import com.mygdx.game.view.EnemyRenderer;
+import com.mygdx.game.view.FieldRenderer;
 import com.mygdx.game.view.HandRenderer;
 import com.mygdx.game.view.PlayerRenderer;
-import sun.font.TrueTypeFont;
 
 import java.util.Arrays;
 
@@ -51,6 +51,8 @@ public class TestGameScreen implements Screen {
     private HandRenderer handRenderer;
 
     private PlayCards playCards;
+
+    private FieldRenderer fieldRenderer;
 
     public TestGameScreen(Game game) {
         this.game = game;
@@ -157,6 +159,8 @@ public class TestGameScreen implements Screen {
         deck.drawHand();
 
         playCards = new PlayCards(deck, player, enemy);
+
+        fieldRenderer = new FieldRenderer(handRenderer, camera);
     }
 
     @Override
@@ -168,9 +172,14 @@ public class TestGameScreen implements Screen {
         playerRenderer.updateHover(mouseX, mouseY);
         enemyRenderer.updateHover(mouseX, mouseY);
         handRenderer.updateHover(mouseX, mouseY);
+        fieldRenderer.updateHover(mouseX, mouseY);
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             handRenderer.onClick();
         }
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            fieldRenderer.onClick();
+        }
+
 
         batch.begin();
         batch.draw(background, 0,0, viewport.getWorldWidth(), viewport.getWorldHeight());
@@ -179,6 +188,7 @@ public class TestGameScreen implements Screen {
         playerRenderer.render();
         enemyRenderer.render();
         handRenderer.render();
+        fieldRenderer.render();
 
         stage.act(delta);
         stage.draw();
@@ -208,6 +218,7 @@ public class TestGameScreen implements Screen {
         playerRenderer.dispose();
         enemyRenderer.dispose();
         handRenderer.dispose();
+        //fieldRenderer.dispose();
     }
 
     private void togglePause() {
