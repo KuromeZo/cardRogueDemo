@@ -52,6 +52,8 @@ public class PlayCards {
             System.out.println("Applied effect of " + card.getName() + " to " + target.getName());
         }
 
+        deck.getHand().removeAll(deck.getField());
+
         deck.getField().clear(); // Очищаем поле после применения эффектов
         deck.getField().addAll(Collections.nCopies(4, null));
     }

@@ -28,6 +28,7 @@ public class RangedAttackCard extends Card {
     public void applyEffect(Entity target, Entity attacker) {
 
         if (attacker instanceof Enemy && ((Enemy) attacker).hasMeleeWeapon()) {
+            System.out.println("not range enemy");
             return;
         }
         for (int i = 0; i < numHits; i++) {

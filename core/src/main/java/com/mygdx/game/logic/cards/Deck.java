@@ -31,7 +31,7 @@ public class Deck {
 
     public void drawHand(){
         hand.clear();
-        HandRenderer.resetEnergy();
+        //HandRenderer.resetEnergy();
 
         float currentX = INITIAL_X_POSITION; // Начинаем с начальной позиции по X
         float currentY = INITIAL_Y_POSITION; // Начальная позиция по Y (фиксированная)

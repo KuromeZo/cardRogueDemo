@@ -13,6 +13,8 @@ public class FieldRenderer {
     private final OrthographicCamera camera;
     private final ShapeRenderer shapeRenderer;
     private static boolean[] isSlotLocked = new boolean[4];
+    private int[] xPositions = {188, 288, 388, 488};
+    private int yPosition = 300;;
 
     public FieldRenderer(HandRenderer handRenderer, OrthographicCamera camera) {
         this.handRenderer = handRenderer;
@@ -30,10 +32,6 @@ public class FieldRenderer {
     }
 
     private void renderCircles() {
-        // Пример координат для кружочков
-        int[] xPositions = {100, 200, 300, 400}; // координаты по горизонтали
-        int yPosition = 300; // координата по вертикали
-
         // Рисуем кружочки на экране
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (int i = 0; i < 4; i++) {
@@ -59,10 +57,9 @@ public class FieldRenderer {
 
         // Проверяем, на какой кружок кликнули
         selectedPosition = -1;
-        int[] xPositions = {100, 200, 300, 400};
         for (int i = 0; i < 4; i++) {
             if (worldMouseX >= xPositions[i] - 20 && worldMouseX <= xPositions[i] + 20 &&
-                worldMouseY >= 275 && worldMouseY <= 325) {
+                worldMouseY >= yPosition-25 && worldMouseY <= yPosition+25) {
                 selectedPosition = i;
                 break;
             }
@@ -71,10 +68,8 @@ public class FieldRenderer {
 
     public void onClick() {
         // Если позиция выбрана, передаем ее в HandRenderer
-        if (selectedPosition != -1 && !isSlotLocked[selectedPosition]) {
+        if (selectedPosition != -1) {
             handRenderer.setSelectedPosition(selectedPosition);
-            // После выбора позиции, блокируем слот для повторного выбора
-            isSlotLocked[selectedPosition] = true;
         }
     }
 

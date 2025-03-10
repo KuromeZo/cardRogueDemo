@@ -21,7 +21,7 @@ public class HandRenderer {
     private final BitmapFont font;
     private final OrthographicCamera camera;
     private int selectedCardIndex = -1;
-    private static int energy = 4;
+    //private static int energy = 4;
     private int selectedPosition = -1;
 
     private static Entity player = null;
@@ -79,24 +79,24 @@ public class HandRenderer {
     }
 
     public void onClick() {
-        if (energy != 0 && selectedCardIndex != -1) {
+        if (/*energy != 0 &&*/ selectedCardIndex != -1) {
             Card selectedCard = deck.getHand().get(selectedCardIndex);
 
             selectedCard.setPlayerT();
 
             // Если позиция выбрана, то карта размещается в соответствующем месте на поле
             if (selectedPosition != -1) {
+                deck.getField().remove(selectedPosition);
                 deck.getField().add(selectedPosition, selectedCard); // Используем выбранную позицию
-                deck.getHand().remove(selectedCard);
-                energy--;
+                //energy--;
                 System.out.println("Card added to field in position " + (selectedPosition + 1) + ": " + selectedCard.getName());
                 selectedPosition = -1;
             } else {
                 System.out.println("No position selected");
             }
-        } else {
+        } /*else if (energy == 0) {
             System.out.println("No energy");
-        }
+        }*/
     }
 
     public void setSelectedPosition(int position) {
@@ -131,9 +131,9 @@ public class HandRenderer {
         }
     }*/
 
-    public static void resetEnergy() {
+    /*public static void resetEnergy() {
         energy = 4;
-    }
+    }*/
 
     public static void removeStun(){
         enemy.unstun();

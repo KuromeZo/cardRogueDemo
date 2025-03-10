@@ -31,6 +31,7 @@ public class MeleeAttackCard extends Card {
             missChance = missChance + 0.27f;
         }
         if(attacker instanceof Enemy && ((Enemy) attacker).hasRangedWeapon()){
+            System.out.println("not melee enemy");
             return;
         }
         for (int i = 0; i < numHits; i++) {
