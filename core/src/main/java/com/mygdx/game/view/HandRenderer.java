@@ -15,7 +15,7 @@ import com.mygdx.game.logic.entities.Entity;
 import java.util.List;
 
 public class HandRenderer {
-    private static Deck deck = null;
+    public static Deck deck = null;
     private final ShapeRenderer shapeRenderer;
     private final SpriteBatch batch;
     private final BitmapFont font;
@@ -94,46 +94,12 @@ public class HandRenderer {
             } else {
                 System.out.println("No position selected");
             }
-        } /*else if (energy == 0) {
-            System.out.println("No energy");
-        }*/
+        }
     }
 
     public void setSelectedPosition(int position) {
         this.selectedPosition = position;
     }
-
-    /*public void onClick() {
-        if(energy != 0) {
-            if (selectedCardIndex != -1) {
-                Card selectedCard = deck.getHand().get(selectedCardIndex);
-
-                // Проверяем тип карты и решаем, кто будет целью
-                Entity target = null;
-                Entity attacker = null;
-
-                // Если это карта атаки (например, MeleeAttackCard или RangedAttackCard)
-                if (selectedCard instanceof MeleeAttackCard || selectedCard instanceof RangedAttackCard) {
-                    target = enemy;  // Враг становится целью
-                    attacker = player;
-                } else {
-                    target = player;  // В противном случае цель - игрок
-                    attacker = enemy;
-                }
-
-                // Применяем эффект карты на цель
-                selectedCard.applyEffect(target, attacker);
-                deck.getHand().remove(selectedCard);  // Удаляем карту из руки после использования
-                energy--;
-            }
-        } else if (energy == 0) {
-            System.out.println("No energy");
-        }
-    }*/
-
-    /*public static void resetEnergy() {
-        energy = 4;
-    }*/
 
     public static void removeStun(){
         enemy.unstun();

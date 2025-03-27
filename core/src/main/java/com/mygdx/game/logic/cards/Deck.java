@@ -34,7 +34,6 @@ public class Deck {
         //HandRenderer.resetEnergy();
 
         float currentX = INITIAL_X_POSITION; // Начинаем с начальной позиции по X
-        float currentY = INITIAL_Y_POSITION; // Начальная позиция по Y (фиксированная)
 
         Random random = new Random();
         for (int i = 0; i < 5; i++) {
@@ -45,7 +44,7 @@ public class Deck {
             Card card = originalCard.clone(); // Создаем копию карты
 
             card.setX(currentX);
-            card.setY(currentY);
+            card.setY(INITIAL_Y_POSITION);
             hand.add(card);
 
             currentX += CARD_X_OFFSET;
@@ -55,7 +54,9 @@ public class Deck {
     public void startNewTurn() {
         PlayCards.applyEffects();
         //activateFieldCards();
-        HandRenderer.enemyTurn();
+        //HandRenderer.enemyTurn();
+        EnemyDeck.drawField();
+        PlayEnemyCards.applyEffects();
         returnHandToDeck(); // Возвращаем карты в колоду и перемешиваем
         System.out.println("-");
         for (Card card : deck) {

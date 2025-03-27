@@ -25,6 +25,7 @@ import com.mygdx.game.view.FieldRenderer;
 import com.mygdx.game.view.HandRenderer;
 import com.mygdx.game.view.PlayerRenderer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class TestGameScreen implements Screen {
@@ -50,7 +51,11 @@ public class TestGameScreen implements Screen {
     private Deck deck;
     private HandRenderer handRenderer;
 
+    private EnemyDeck enemyDeck;
+
     private PlayCards playCards;
+
+    private PlayEnemyCards playEnemyCards;
 
     private FieldRenderer fieldRenderer;
 
@@ -144,21 +149,33 @@ public class TestGameScreen implements Screen {
         enemyRenderer = new EnemyRenderer(enemy, camera);
 
         deck = new Deck(Arrays.asList(
-            new RangedAttackCard("Fireball", "Deals 10 damage", false, 5,
+            new RangedAttackCard("Fireball", "Deals 5 damage", false, 5,
                 0.5f, 1.5f, 1.5f, 0.4f, 3),
-            new MeleeAttackCard("Slash", "Deals 5 damage", false,10,
+            new MeleeAttackCard("Slash", "Deals 10 damage", false,10,
                 0.5f, 1.5f, 2.0f, 0.2f, 1),
-            new HealCard("Heal", "Heals 15 hp", false,10),
+            new HealCard("Heal", "Heals 15 hp", false,15),
             new DodgeCard("Dodge", "Dodge attack", false,0.7f),
             new CoverCard("Cover", "Cover", false,true),
             new CounterAttackCard("CounterAttack", "------", false),
             new ArmorCard("Armor", "Adds 5 armor", false, 5)
         ));
 
+        enemyDeck = new EnemyDeck(Arrays.asList(
+            new RangedAttackCard("SmallFireball", "Deals 3 damage", false, 3,
+                0.5f, 1.5f, 1.5f, 0.4f, 3),
+            new MeleeAttackCard("Slash", "Deals 5 damage", false,6,
+                0.5f, 1.5f, 2.0f, 0.2f, 1),
+            new HealCard("Heal", "Heals 9 hp", false,9),
+            new ArmorCard("Armor", "Adds 5 armor", false, 5),
+            new DodgeCard("Dodge", "Dodge attack", false,0.7f)
+            ));
+
         handRenderer = new HandRenderer(deck, camera, player, enemy);
         deck.drawHand();
 
         playCards = new PlayCards(deck, player, enemy);
+
+        playEnemyCards = new PlayEnemyCards(enemyDeck, player, enemy);
 
         fieldRenderer = new FieldRenderer(handRenderer, camera);
     }
