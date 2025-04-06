@@ -17,14 +17,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.logic.cards.*;
-import com.mygdx.game.logic.entities.Enemy;
-import com.mygdx.game.logic.entities.Player;
+import com.mygdx.game.logic.battle.BattleManager;
 import com.mygdx.game.view.EnemyRenderer;
 import com.mygdx.game.view.FieldRenderer;
 import com.mygdx.game.view.HandRenderer;
 import com.mygdx.game.view.PlayerRenderer;
-import java.util.Arrays;
 
 public class TestGameScreen implements Screen {
     private final Game game;
@@ -40,21 +37,12 @@ public class TestGameScreen implements Screen {
     private Table buttonMoveTable;
     private Table pauseTable;
 
-    private Player player;
+    private BattleManager battleManager;
+
+    // Рендереры
     private PlayerRenderer playerRenderer;
-
-    private Enemy enemy;
     private EnemyRenderer enemyRenderer;
-
-    private Deck deck;
     private HandRenderer handRenderer;
-
-    private EnemyDeck enemyDeck;
-
-    private PlayCards playCards;
-
-    private PlayEnemyCards playEnemyCards;
-
     private FieldRenderer fieldRenderer;
 
     public TestGameScreen(Game game) {
@@ -63,24 +51,34 @@ public class TestGameScreen implements Screen {
 
     @Override
     public void show() {
+        setupCamera();
+        setupStage();
+        setupResources();
+        setupUI();
+        initializeGameSystem();
+    }
+
+    private void setupCamera() {
         camera = new OrthographicCamera();
         viewport = new FillViewport(640, 480, camera);
         viewport.apply();
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
         camera.update();
+    }
 
+    private void setupStage() {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
+    }
 
+    private void setupResources() {
         batch = new SpriteBatch();
         background = new Texture("testback.png");
         skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-
-        setupUI();
-        initializeGameEntities();
     }
 
     private void setupUI() {
+        // Кнопка паузы
         TextButton pauseButton = new TextButton("Pause", skin);
         buttonPauseTable = new Table();
         buttonPauseTable.setFillParent(true);
@@ -88,19 +86,22 @@ public class TestGameScreen implements Screen {
         buttonPauseTable.add(pauseButton).pad(10);
         stage.addActor(buttonPauseTable);
 
+        // Кнопка хода
         TextButton moveButton = new TextButton("Move", skin);
         buttonMoveTable = new Table();
         buttonMoveTable.setFillParent(true);
-        buttonMoveTable.top(); // Размещаем сверху по центру
+        buttonMoveTable.top();
         buttonMoveTable.add(moveButton).pad(10);
         stage.addActor(buttonMoveTable);
 
+        // Темный оверлей для паузы
         darkOverlay = new Image(new Texture("darkoverlay.png"));
         darkOverlay.setColor(0, 0, 0, 0.5f);
         darkOverlay.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         darkOverlay.setVisible(false);
         stage.addActor(darkOverlay);
 
+        // Меню паузы
         pauseTable = new Table();
         pauseTable.setFillParent(true);
         pauseTable.center();
@@ -113,6 +114,7 @@ public class TestGameScreen implements Screen {
         pauseTable.add(exitButton);
         stage.addActor(pauseTable);
 
+        // Обработчики событий для кнопок
         pauseButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -137,66 +139,32 @@ public class TestGameScreen implements Screen {
         moveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                startNewTurn();
+                battleManager.startNewTurn();
+                fieldRenderer.clearAllPositionLabels();
             }
         });
     }
 
-    private void initializeGameEntities() {
-        // Инициализация игрока и врага
-        player = new Player("Hero", 100, 0.0f, false);
-        player.setPosition(50, viewport.getWorldHeight() / 2 - 25, 50, 50);
-        playerRenderer = new PlayerRenderer(player, camera);
+    private void initializeGameSystem() {
+        // Создаем BattleManager
+        battleManager = new BattleManager();
 
-        enemy = new Enemy("Enemy", 50, false, true);
-        enemy.setPosition(540, viewport.getWorldHeight() / 2 - 25, 50, 50);
-        enemyRenderer = new EnemyRenderer(enemy, camera);
+        // Устанавливаем позиции для игрока и врага
+        battleManager.getPlayer().setPosition(50, viewport.getWorldHeight() / 2 - 25, 50, 50);
+        battleManager.getEnemy().setPosition(540, viewport.getWorldHeight() / 2 - 25, 50, 50);
 
-        // Инициализация колод
-        deck = new Deck(Arrays.asList(
-            new RangedAttackCard("Fireball", "Deals 5 damage", false, 5,
-                0.5f, 1.5f, 1.5f, 0.4f, 3),
-            new MeleeAttackCard("Slash", "Deals 10 damage", false, 10,
-                0.5f, 1.5f, 2.0f, 0.2f, 1),
-            new HealCard("Heal", "Heals 15 hp", false, 15),
-            new DodgeCard("Dodge", "Dodge attack", false, 0.7f),
-            new CoverCard("Cover", "Cover", false, true),
-            new CounterAttackCard("CounterAttack", "------", false),
-            new ArmorCard("Armor", "Adds 5 armor", false, 5)
-        ));
+        // Инициализируем рендереры
+        playerRenderer = new PlayerRenderer(battleManager.getPlayer(), camera);
+        enemyRenderer = new EnemyRenderer(battleManager.getEnemy(), camera);
+        handRenderer = new HandRenderer(battleManager.getPlayerDeck(), camera,
+            battleManager.getPlayer(), battleManager.getEnemy());
 
-        enemyDeck = new EnemyDeck(Arrays.asList(
-            new RangedAttackCard("SmallFireball", "Deals 3 damage", false, 3,
-                0.5f, 1.5f, 1.5f, 0.4f, 3),
-            new MeleeAttackCard("Slash", "Deals 5 damage", false, 6,
-                0.5f, 1.5f, 2.0f, 0.2f, 1),
-            new HealCard("Heal", "Heals 9 hp", false, 9),
-            new ArmorCard("Armor", "Adds 5 armor", false, 5),
-            new DodgeCard("Dodge", "Dodge attack", false, 0.7f)
-        ), deck);
+        // Отрисовываем начальную руку
+        battleManager.getPlayerDeck().drawHand();
 
-        // Устанавливаем связи между объектами
-
-        playCards = new PlayCards(deck, player, enemy);
-        deck.setPlayCards(playCards);
-
-        playEnemyCards = new PlayEnemyCards(enemyDeck, player, enemy);
-
-        // Инициализация рендереров
-        handRenderer = new HandRenderer(deck, camera, player, enemy);
-        deck.drawHand();
-
+        // Инициализируем рендерер поля
         fieldRenderer = new FieldRenderer(handRenderer, camera);
         handRenderer.setFieldRenderer(fieldRenderer);
-    }
-
-    private void startNewTurn() {
-        enemyDeck.drawField();
-        playEnemyCards.applyEffects();
-        deck.startNewTurn();
-        enemy.unstun(); // Снимаем оглушение с врага
-
-        fieldRenderer.clearAllPositionLabels();
     }
 
     @Override
