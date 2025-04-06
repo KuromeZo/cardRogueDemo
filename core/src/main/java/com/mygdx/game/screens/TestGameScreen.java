@@ -62,7 +62,7 @@ public class TestGameScreen implements Screen {
     }
 
     @Override
-    public void show(){
+    public void show() {
         camera = new OrthographicCamera();
         viewport = new FillViewport(640, 480, camera);
         viewport.apply();
@@ -76,6 +76,11 @@ public class TestGameScreen implements Screen {
         background = new Texture("testback.png");
         skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 
+        setupUI();
+        initializeGameEntities();
+    }
+
+    private void setupUI() {
         TextButton pauseButton = new TextButton("Pause", skin);
         buttonPauseTable = new Table();
         buttonPauseTable.setFillParent(true);
@@ -91,7 +96,7 @@ public class TestGameScreen implements Screen {
         stage.addActor(buttonMoveTable);
 
         darkOverlay = new Image(new Texture("darkoverlay.png"));
-        darkOverlay.setColor(0,0,0,0.5f);
+        darkOverlay.setColor(0, 0, 0, 0.5f);
         darkOverlay.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
         darkOverlay.setVisible(false);
         stage.addActor(darkOverlay);
@@ -110,21 +115,21 @@ public class TestGameScreen implements Screen {
 
         pauseButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
+            public void clicked(InputEvent event, float x, float y) {
                 togglePause();
             }
         });
 
         continueButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
+            public void clicked(InputEvent event, float x, float y) {
                 togglePause();
             }
         });
 
         exitButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
+            public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
             }
         });
@@ -132,28 +137,30 @@ public class TestGameScreen implements Screen {
         moveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                deck.startNewTurn();
+                startNewTurn();
             }
         });
+    }
 
+    private void initializeGameEntities() {
+        // Инициализация игрока и врага
         player = new Player("Hero", 100, 0.0f, false);
         player.setPosition(50, viewport.getWorldHeight() / 2 - 25, 50, 50);
-
         playerRenderer = new PlayerRenderer(player, camera);
 
         enemy = new Enemy("Enemy", 50, false, true);
         enemy.setPosition(540, viewport.getWorldHeight() / 2 - 25, 50, 50);
-
         enemyRenderer = new EnemyRenderer(enemy, camera);
 
+        // Инициализация колод
         deck = new Deck(Arrays.asList(
             new RangedAttackCard("Fireball", "Deals 5 damage", false, 5,
                 0.5f, 1.5f, 1.5f, 0.4f, 3),
-            new MeleeAttackCard("Slash", "Deals 10 damage", false,10,
+            new MeleeAttackCard("Slash", "Deals 10 damage", false, 10,
                 0.5f, 1.5f, 2.0f, 0.2f, 1),
-            new HealCard("Heal", "Heals 15 hp", false,15),
-            new DodgeCard("Dodge", "Dodge attack", false,0.7f),
-            new CoverCard("Cover", "Cover", false,true),
+            new HealCard("Heal", "Heals 15 hp", false, 15),
+            new DodgeCard("Dodge", "Dodge attack", false, 0.7f),
+            new CoverCard("Cover", "Cover", false, true),
             new CounterAttackCard("CounterAttack", "------", false),
             new ArmorCard("Armor", "Adds 5 armor", false, 5)
         ));
@@ -161,23 +168,35 @@ public class TestGameScreen implements Screen {
         enemyDeck = new EnemyDeck(Arrays.asList(
             new RangedAttackCard("SmallFireball", "Deals 3 damage", false, 3,
                 0.5f, 1.5f, 1.5f, 0.4f, 3),
-            new MeleeAttackCard("Slash", "Deals 5 damage", false,6,
+            new MeleeAttackCard("Slash", "Deals 5 damage", false, 6,
                 0.5f, 1.5f, 2.0f, 0.2f, 1),
-            new HealCard("Heal", "Heals 9 hp", false,9),
+            new HealCard("Heal", "Heals 9 hp", false, 9),
             new ArmorCard("Armor", "Adds 5 armor", false, 5),
-            new DodgeCard("Dodge", "Dodge attack", false,0.7f)
-            ));
+            new DodgeCard("Dodge", "Dodge attack", false, 0.7f)
+        ), deck);
 
-        handRenderer = new HandRenderer(deck, camera, player, enemy);
-        deck.drawHand();
+        // Устанавливаем связи между объектами
 
         playCards = new PlayCards(deck, player, enemy);
+        deck.setPlayCards(playCards);
 
         playEnemyCards = new PlayEnemyCards(enemyDeck, player, enemy);
 
-        fieldRenderer = new FieldRenderer(handRenderer, camera);
+        // Инициализация рендереров
+        handRenderer = new HandRenderer(deck, camera, player, enemy);
+        deck.drawHand();
 
+        fieldRenderer = new FieldRenderer(handRenderer, camera);
         handRenderer.setFieldRenderer(fieldRenderer);
+    }
+
+    private void startNewTurn() {
+        enemyDeck.drawField();
+        playEnemyCards.applyEffects();
+        deck.startNewTurn();
+        enemy.unstun(); // Снимаем оглушение с врага
+
+        fieldRenderer.clearAllPositionLabels();
     }
 
     @Override
@@ -190,16 +209,14 @@ public class TestGameScreen implements Screen {
         enemyRenderer.updateHover(mouseX, mouseY);
         handRenderer.updateHover(mouseX, mouseY);
         fieldRenderer.updateHover(mouseX, mouseY);
+
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             handRenderer.onClick();
-        }
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             fieldRenderer.onClick();
         }
 
-
         batch.begin();
-        batch.draw(background, 0,0, viewport.getWorldWidth(), viewport.getWorldHeight());
+        batch.draw(background, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
         batch.end();
 
         playerRenderer.render();

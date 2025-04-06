@@ -3,11 +3,12 @@ package com.mygdx.game.logic.cards;
 import com.mygdx.game.logic.entities.Entity;
 
 import java.util.Collections;
+import java.util.List;
 
 public class PlayCards {
-    private static Deck deck;
-    private static Entity player;
-    private static Entity enemy;
+    private final Deck deck;
+    private final Entity player;
+    private final Entity enemy;
 
     public PlayCards(Deck deck, Entity player, Entity enemy) {
         this.deck = deck;
@@ -15,8 +16,10 @@ public class PlayCards {
         this.enemy = enemy;
     }
 
-    public static void applyEffects() {
-        for (Card card : deck.getField()) {
+    public void applyEffects() {
+        List<Card> fieldCards = deck.getField();
+
+        for (Card card : fieldCards) {
             if (card == null) {
                 continue;
             }
@@ -44,10 +47,8 @@ public class PlayCards {
                 }
             }
 
-
             card.applyEffect(target, attacker);
-
-            card.setPlayerF();
+            card.setPlayerOwnership(false);
 
             System.out.println("Applied effect of " + card.getName() + " to " + target.getName());
         }

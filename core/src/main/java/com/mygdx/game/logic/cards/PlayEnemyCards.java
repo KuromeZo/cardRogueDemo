@@ -2,11 +2,12 @@ package com.mygdx.game.logic.cards;
 
 import com.mygdx.game.logic.entities.Entity;
 import java.util.Collections;
+import java.util.List;
 
 public class PlayEnemyCards {
-    private static EnemyDeck deck;
-    private static Entity player;
-    private static Entity enemy;
+    private final EnemyDeck deck;
+    private final Entity player;
+    private final Entity enemy;
 
     public PlayEnemyCards(EnemyDeck deck, Entity player, Entity enemy) {
         this.deck = deck;
@@ -14,7 +15,8 @@ public class PlayEnemyCards {
         this.enemy = enemy;
     }
 
-    public static void applyEffects(){
+    public void applyEffects(){
+        List<Card> fieldCards = deck.getFieldE();
         System.out.println("---");
         // Выводим имена карт на поле (проверяем, что карта не null)
         for (Card card : deck.getFieldE()) {
@@ -25,7 +27,7 @@ public class PlayEnemyCards {
         System.out.println("---");
 
         // Применяем эффекты карт
-        for(Card card : deck.getFieldE()){
+        for(Card card : fieldCards){
             if (card == null) {
                 continue;  // Пропускаем пустые карты
             }
@@ -36,7 +38,7 @@ public class PlayEnemyCards {
             Entity attacker = null;
 
             // Логика для применения эффектов карты
-            if (!card.isPlayer) {  // Если карта принадлежит врагу
+            if (!card.isPlayerCard()) {  // Если карта принадлежит врагу
                 if (card instanceof MeleeAttackCard || card instanceof RangedAttackCard) {
                     target = enemy;  // Цель - игрок
                     attacker = player;  // Атакующий - враг
@@ -50,8 +52,8 @@ public class PlayEnemyCards {
         }
 
         // Очищаем поле и заполняем его пустыми картами
-        deck.getFieldE().clear();
-        deck.getFieldE().addAll(Collections.nCopies(4, null));
+        fieldCards.clear();
+        fieldCards.addAll(Collections.nCopies(4, null));
 
         // Проверяем, что поле очищено (если нужно, выводим список карт)
         System.out.println("---");

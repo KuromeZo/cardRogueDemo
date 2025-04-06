@@ -13,7 +13,7 @@ import com.mygdx.game.logic.entities.Entity;
 import java.util.List;
 
 public class HandRenderer {
-    public static Deck deck = null;
+    private final Deck deck;
     private final ShapeRenderer shapeRenderer;
     private final SpriteBatch batch;
     private final BitmapFont font;
@@ -21,8 +21,8 @@ public class HandRenderer {
     private int selectedCardIndex = -1;
     private int selectedPosition = -1;
 
-    private static Entity player = null;
-    private static Entity enemy = null;
+    private final Entity player;
+    private final Entity enemy;
     private FieldRenderer fieldRenderer;
 
     public HandRenderer(Deck deck, OrthographicCamera camera, Entity player, Entity enemy) {
@@ -80,7 +80,7 @@ public class HandRenderer {
         if (selectedCardIndex != -1) {
             Card selectedCard = deck.getHand().get(selectedCardIndex);
 
-            selectedCard.setPlayerT();
+            selectedCard.setPlayerOwnership(true);
 
             // Если позиция выбрана, то карта размещается в соответствующем месте на поле
             if (selectedPosition != -1) {
@@ -105,10 +105,6 @@ public class HandRenderer {
 
     public void setSelectedPosition(int position) {
         this.selectedPosition = position;
-    }
-
-    public static void removeStun(){
-        enemy.unstun();
     }
 
     public void setFieldRenderer(FieldRenderer fieldRenderer) {

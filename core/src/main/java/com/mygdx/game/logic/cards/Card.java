@@ -31,6 +31,18 @@ public abstract class Card implements Cloneable { // Добавил Cloneable
         return name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isPlayerCard() {
+        return isPlayer;
+    }
+
+    public void setPlayerOwnership(boolean isPlayer) {
+        this.isPlayer = isPlayer;
+    }
+
     public float getX() {
         return x;
     }
@@ -51,19 +63,15 @@ public abstract class Card implements Cloneable { // Добавил Cloneable
         return width;
     }
 
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
     public float getHeight() {
         return height;
     }
 
-    public void setPlayerT() {
-        this.isPlayer = true;
-    }
-
-    public void setPlayerF() {
-        this.isPlayer = false;
-    }
-
-    public String getDescription() {
-        return description;
+    public void setHeight(float height) {
+        this.height = height;
     }
 }

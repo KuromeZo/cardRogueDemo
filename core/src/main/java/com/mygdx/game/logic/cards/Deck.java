@@ -9,6 +9,7 @@ public class Deck {
     private List<Card> deck;
     private List<Card> hand;
     private List<Card> field;
+    private PlayCards playCards;
 
     private static final float INITIAL_X_POSITION = 100; // Начальная позиция по X
     private static final float INITIAL_Y_POSITION = 20;  // Фиксированная позиция по Y
@@ -19,6 +20,10 @@ public class Deck {
         this.hand = new ArrayList<>();
         this.field = new ArrayList<>(Collections.nCopies(4, null));
         shuffle(); // Перемешиваем колоду при создании
+    }
+
+    public void setPlayCards(PlayCards playCards) {
+        this.playCards = playCards;
     }
 
     public void shuffle() {
@@ -49,18 +54,19 @@ public class Deck {
     }
 
     public void startNewTurn() {
-        PlayCards.applyEffects();
-        EnemyDeck.drawField();
-        PlayEnemyCards.applyEffects();
+        if (playCards != null) {
+            playCards.applyEffects();
+        }
+
         returnHandToDeck(); // Возвращаем карты в колоду и перемешиваем
-        System.out.println("-");
+
+        /*System.out.println("-");
         for (Card card : deck) {
             System.out.println(card.getName());
         }
-        System.out.println("-");
-        drawHand();         // Берем новые карты
-        HandRenderer.removeStun();
-        FieldRenderer.clearAllPositionLabels();
+        System.out.println("-");*/
+
+        drawHand(); // Берем новые карты
     }
 
     public List<Card> getHand() {
@@ -70,6 +76,10 @@ public class Deck {
     public void returnHandToDeck() {
         shuffle();
         hand.clear();
+    }
+
+    public List<Card> getDeck() {
+        return deck;
     }
 
     public List<Card> getField() {

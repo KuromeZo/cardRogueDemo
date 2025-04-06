@@ -1,19 +1,17 @@
 package com.mygdx.game.logic.cards;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import static com.mygdx.game.view.HandRenderer.deck;
+import java.util.*;
 
 public class EnemyDeck {
-    private static List<Card> eDeck;
-    private static List<Card> field;
+    private List<Card> eDeck;
+    private List<Card> field;
+    private final Deck deck;
+    private List<Card> remainingPlayerCards;
 
-    public EnemyDeck(List<Card> eCards) {
+    public EnemyDeck(List<Card> eCards, Deck deck) {
         this.eDeck = eCards;
         this.field = new ArrayList<>(Collections.nCopies(4, null));
+        this.deck = deck;
         shuffle(); // Перемешиваем колоду при создании
     }
 
@@ -21,16 +19,27 @@ public class EnemyDeck {
         Collections.shuffle(eDeck);
     }
 
-    public static void drawField(){
+    public void drawField(){
         field.clear();
         Random random = new Random();
 
         List<Card> remainingPlayerCards = new ArrayList<>(deck.getHand());
-        System.out.println("--");
+
+        for (Card fieldCard : deck.getField()) {
+            // Ищем первую подходящую карту и удаляем её
+            for (Iterator<Card> iterator = remainingPlayerCards.iterator(); iterator.hasNext(); ) {
+                Card handCard = iterator.next();
+                if (handCard.equals(fieldCard)) { // или handCard.getType().equals(fieldCard.getType())
+                    iterator.remove();
+                    break; // Удалили одну копию — выходим из внутреннего цикла
+                }
+            }
+        }
+        System.out.println("--/");
         for (Card card : remainingPlayerCards) {
             System.out.println(card.getName());
         }
-        System.out.println("--");
+        System.out.println("--/");
 
         int enemyCardCount = 2;
 
