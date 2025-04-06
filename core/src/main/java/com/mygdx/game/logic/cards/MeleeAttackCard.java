@@ -3,7 +3,6 @@ package com.mygdx.game.logic.cards;
 import com.mygdx.game.logic.entities.Enemy;
 import com.mygdx.game.logic.entities.Entity;
 import com.mygdx.game.logic.entities.Player;
-import com.sun.imageio.plugins.tiff.TIFFDecompressor;
 
 public class MeleeAttackCard extends Card {
     private int flatDamage;  // Плоский урон

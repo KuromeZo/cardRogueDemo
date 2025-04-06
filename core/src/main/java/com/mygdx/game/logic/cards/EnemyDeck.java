@@ -1,7 +1,5 @@
 package com.mygdx.game.logic.cards;
 
-import com.mygdx.game.logic.entities.Entity;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +10,6 @@ import static com.mygdx.game.view.HandRenderer.deck;
 public class EnemyDeck {
     private static List<Card> eDeck;
     private static List<Card> field;
-
 
     public EnemyDeck(List<Card> eCards) {
         this.eDeck = eCards;

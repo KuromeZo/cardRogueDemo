@@ -1,13 +1,9 @@
 package com.mygdx.game.logic.cards;
 
-import com.mygdx.game.logic.entities.Entity;
 import com.mygdx.game.view.FieldRenderer;
 import com.mygdx.game.view.HandRenderer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Deck {
     private List<Card> deck;
@@ -31,30 +27,29 @@ public class Deck {
 
     public void drawHand(){
         hand.clear();
-        //HandRenderer.resetEnergy();
+        Map<String, Integer> cardCounts = new HashMap<>();
 
         float currentX = INITIAL_X_POSITION; // Начинаем с начальной позиции по X
 
         Random random = new Random();
-        for (int i = 0; i < 5; i++) {
-            if (deck.isEmpty()) break;
-
+        while(hand.size() < 5 && !deck.isEmpty()) {
             int randomIndex = random.nextInt(deck.size());
             Card originalCard = deck.get(randomIndex);
-            Card card = originalCard.clone(); // Создаем копию карты
+            String cardType = originalCard.getName();
 
-            card.setX(currentX);
-            card.setY(INITIAL_Y_POSITION);
-            hand.add(card);
-
-            currentX += CARD_X_OFFSET;
+            if(cardCounts.getOrDefault(cardType, 0) < 2) {
+                Card card = originalCard.clone();
+                card.setX(currentX);
+                card.setY(INITIAL_Y_POSITION);
+                hand.add(card);
+                cardCounts.put(cardType, cardCounts.getOrDefault(cardType, 0) + 1);
+                currentX += CARD_X_OFFSET;
+            }
         }
     }
 
     public void startNewTurn() {
         PlayCards.applyEffects();
-        //activateFieldCards();
-        //HandRenderer.enemyTurn();
         EnemyDeck.drawField();
         PlayEnemyCards.applyEffects();
         returnHandToDeck(); // Возвращаем карты в колоду и перемешиваем
@@ -65,7 +60,7 @@ public class Deck {
         System.out.println("-");
         drawHand();         // Берем новые карты
         HandRenderer.removeStun();
-        FieldRenderer.startTurn();
+        FieldRenderer.clearAllPositionLabels();
     }
 
     public List<Card> getHand() {

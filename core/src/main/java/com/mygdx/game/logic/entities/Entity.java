@@ -32,6 +32,7 @@ public abstract class Entity {
 
         if (currentHealth < 0) {
             currentHealth = 0;
+            System.out.println(name + " dead");
             Gdx.app.exit();
         }
     }

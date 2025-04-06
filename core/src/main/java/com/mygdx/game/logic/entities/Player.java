@@ -11,7 +11,6 @@ public class Player extends Entity{
         this.comboMultiplier = 1;
         this.inCover = inCover;
         this.resistance = resistance;
-
     }
 
     public void setResistance(float resistance) {

@@ -8,8 +8,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.logic.cards.Card;
 import com.mygdx.game.logic.cards.Deck;
-import com.mygdx.game.logic.cards.MeleeAttackCard;
-import com.mygdx.game.logic.cards.RangedAttackCard;
 import com.mygdx.game.logic.entities.Entity;
 
 import java.util.List;
@@ -21,11 +19,11 @@ public class HandRenderer {
     private final BitmapFont font;
     private final OrthographicCamera camera;
     private int selectedCardIndex = -1;
-    //private static int energy = 4;
     private int selectedPosition = -1;
 
     private static Entity player = null;
     private static Entity enemy = null;
+    private FieldRenderer fieldRenderer;
 
     public HandRenderer(Deck deck, OrthographicCamera camera, Entity player, Entity enemy) {
         this.deck = deck;
@@ -79,17 +77,25 @@ public class HandRenderer {
     }
 
     public void onClick() {
-        if (/*energy != 0 &&*/ selectedCardIndex != -1) {
+        if (selectedCardIndex != -1) {
             Card selectedCard = deck.getHand().get(selectedCardIndex);
 
             selectedCard.setPlayerT();
 
             // Если позиция выбрана, то карта размещается в соответствующем месте на поле
             if (selectedPosition != -1) {
-                deck.getField().remove(selectedPosition);
-                deck.getField().add(selectedPosition, selectedCard); // Используем выбранную позицию
-                //energy--;
+                // Удаляем предыдущую версию этой карты из поля, если она уже есть
+                for (int i = 0; i < deck.getField().size(); i++) {
+                    if (deck.getField().get(i) != null && deck.getField().get(i).equals(selectedCard)) {
+                        deck.getField().set(i, null); // Очищаем старую позицию
+                        fieldRenderer.clearPositionLabel(i);
+                        break; // Прерываем, так как карта может быть только в одном месте
+                    }
+                }
+
+                deck.getField().set(selectedPosition, selectedCard); // Добавляем карту на новую позицию
                 System.out.println("Card added to field in position " + (selectedPosition + 1) + ": " + selectedCard.getName());
+                fieldRenderer.placeCard(selectedPosition, selectedCard.getName());
                 selectedPosition = -1;
             } else {
                 System.out.println("No position selected");
@@ -105,30 +111,8 @@ public class HandRenderer {
         enemy.unstun();
     }
 
-    public static void enemyTurn(){
-        for (int i = 0; i < deck.getHand().size(); i++) {
-            if(enemy.isStunned()){
-                break;
-            }
-            Card selectedCard = deck.getHand().get(i);
-
-            System.out.println(selectedCard.getName());
-            // Проверяем тип карты и решаем, кто будет целью
-            Entity target = null;
-            Entity attacker = null;
-
-            // Если это карта атаки (например, MeleeAttackCard или RangedAttackCard)
-            if (selectedCard instanceof MeleeAttackCard || selectedCard instanceof RangedAttackCard) {
-                target = player;  // Герой становится целью
-                attacker = enemy;
-            } else {
-                target = enemy;  // В противном случае цель - враг
-                attacker = player;
-            }
-
-            // Применяем эффект карты на цель
-            selectedCard.applyEffect(target, attacker);
-        }
+    public void setFieldRenderer(FieldRenderer fieldRenderer) {
+        this.fieldRenderer = fieldRenderer;
     }
 
     public void dispose() {

@@ -2,28 +2,33 @@ package com.mygdx.game.view;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class FieldRenderer {
     private int selectedPosition = -1; // Выбранная позиция на поле
     private final SpriteBatch batch;
+    private final BitmapFont font;
     private final HandRenderer handRenderer;
     private final OrthographicCamera camera;
     private final ShapeRenderer shapeRenderer;
-    private static boolean[] isSlotLocked = new boolean[4];
     private int[] xPositions = {188, 288, 388, 488};
-    private int yPosition = 300;;
+    private int yPosition = 300;
+
+    private static final Map<Integer, String> positionLabels = new HashMap<>();
 
     public FieldRenderer(HandRenderer handRenderer, OrthographicCamera camera) {
         this.handRenderer = handRenderer;
         this.batch = new SpriteBatch();
         this.camera = camera;
+        this.font = new BitmapFont();
         this.shapeRenderer = new ShapeRenderer();
-        for (int i = 0; i < 4; i++) {
-            isSlotLocked[i] = false;
-        }
+
     }
 
     public void render() {
@@ -40,6 +45,14 @@ public class FieldRenderer {
             drawCircle(xPositions[i], yPosition, i + 1, circleColor);
         }
         shapeRenderer.end();
+
+        batch.begin();
+        for (int i = 0; i < 4; i++) {
+            if (positionLabels.containsKey(i)) {
+                font.draw(batch, positionLabels.get(i), xPositions[i] - 10, yPosition + 5);
+            }
+        }
+        batch.end();
     }
 
     private void drawCircle(int x, int y, int position, Color color) {
@@ -73,14 +86,23 @@ public class FieldRenderer {
         }
     }
 
-    public int getSelectedPosition() {
-        return selectedPosition;
+    public void placeCard(int position, String name) {
+        if (position >= 0 && position < 4) {
+            positionLabels.put(position, name.substring(0, Math.min(2, name.length()))); // Берем 2 буквы
+        }
     }
 
-    public static void startTurn() {
-        // Разблокируем все слоты для нового хода
-        for (int i = 0; i < 4; i++) {
-            isSlotLocked[i] = false;
-        }
+    public void clearPositionLabel(int position) {
+        positionLabels.remove(position);
+    }
+
+    public static void clearAllPositionLabels() {
+        positionLabels.clear();
+    }
+
+    public void dispose() {
+        batch.dispose();
+        font.dispose();
+        shapeRenderer.dispose();
     }
 }

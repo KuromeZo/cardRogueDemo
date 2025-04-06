@@ -24,8 +24,6 @@ import com.mygdx.game.view.EnemyRenderer;
 import com.mygdx.game.view.FieldRenderer;
 import com.mygdx.game.view.HandRenderer;
 import com.mygdx.game.view.PlayerRenderer;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class TestGameScreen implements Screen {
@@ -178,6 +176,8 @@ public class TestGameScreen implements Screen {
         playEnemyCards = new PlayEnemyCards(enemyDeck, player, enemy);
 
         fieldRenderer = new FieldRenderer(handRenderer, camera);
+
+        handRenderer.setFieldRenderer(fieldRenderer);
     }
 
     @Override
@@ -235,7 +235,7 @@ public class TestGameScreen implements Screen {
         playerRenderer.dispose();
         enemyRenderer.dispose();
         handRenderer.dispose();
-        //fieldRenderer.dispose();
+        fieldRenderer.dispose();
     }
 
     private void togglePause() {
