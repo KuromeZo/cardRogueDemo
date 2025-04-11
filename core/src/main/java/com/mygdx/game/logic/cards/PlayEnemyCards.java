@@ -29,22 +29,21 @@ public class PlayEnemyCards {
         // Применяем эффекты карт
         for(Card card : fieldCards){
             if (card == null) {
-                continue;  // Пропускаем пустые карты
+                continue;
             }
             if(enemy.isStunned()){
-                break;  // Если враг оглушен, пропускаем ход
+                break;
             }
             Entity target = null;
             Entity attacker = null;
 
-            // Логика для применения эффектов карты
-            if (!card.isPlayerCard()) {  // Если карта принадлежит врагу
+            if (!card.isPlayerCard()) {
                 if (card instanceof MeleeAttackCard || card instanceof RangedAttackCard) {
-                    target = enemy;  // Цель - игрок
-                    attacker = player;  // Атакующий - враг
+                    target = enemy;
+                    attacker = player;
                 } else {
-                    target = player;  // Для других карт враг атакует сам себя
-                    attacker = enemy;  // Игрок становится атакующим
+                    target = player;
+                    attacker = enemy;
                 }
 
                 card.applyEffect(attacker, target);  // Применяем эффект карты

@@ -29,7 +29,9 @@ public class MeleeAttackCard extends Card {
         if(target.isInDodge()){
             missChance = missChance + 0.27f;
         }
-        if(attacker instanceof Enemy && ((Enemy) attacker).hasRangedWeapon()){
+        if(attacker instanceof Enemy && ((Enemy) attacker).hasMeleeWeapon()){
+            System.out.println("enemy has melee weapon");
+        } else {
             System.out.println("not melee enemy");
             return;
         }

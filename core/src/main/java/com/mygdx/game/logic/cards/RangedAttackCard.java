@@ -27,7 +27,9 @@ public class RangedAttackCard extends Card {
     @Override
     public void applyEffect(Entity target, Entity attacker) {
 
-        if (attacker instanceof Enemy && ((Enemy) attacker).hasMeleeWeapon()) {
+        if (attacker instanceof Enemy && ((Enemy) attacker).hasRangedWeapon()) {
+            System.out.println("enemy has range weapon");
+        } else {
             System.out.println("not range enemy");
             return;
         }

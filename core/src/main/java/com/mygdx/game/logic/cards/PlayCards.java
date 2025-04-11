@@ -34,17 +34,6 @@ public class PlayCards {
                     target = player;
                     attacker = enemy;
                 }
-            } else {
-                if(enemy.isStunned()){
-                    break;
-                }
-                if (card instanceof MeleeAttackCard || card instanceof RangedAttackCard) {
-                    target = player;
-                    attacker = enemy;
-                } else {
-                    target = enemy;
-                    attacker = player;
-                }
             }
 
             card.applyEffect(target, attacker);

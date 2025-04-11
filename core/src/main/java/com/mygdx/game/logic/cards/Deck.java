@@ -59,13 +59,6 @@ public class Deck {
         }
 
         returnHandToDeck(); // Возвращаем карты в колоду и перемешиваем
-
-        /*System.out.println("-");
-        for (Card card : deck) {
-            System.out.println(card.getName());
-        }
-        System.out.println("-");*/
-
         drawHand(); // Берем новые карты
     }
 
